@@ -26,9 +26,14 @@ namespace back_end.Repositorio
             return _generos;
         }
 
-        public Genero ObtenerPorId(int id)
+        public async Task<Genero> ObtenerPorId(int id)
         {
-            return _generos.FirstOrDefault(x=>x.Id==id);
+            //return  _generos.FirstOrDefault(x=>x.Id==id);
+            //esperar 3 segundos de manera asincrona
+            //await libera el hilo principal para que ele permita realizar mas tareas en el servidor web, tarea 
+            await Task.Delay(TimeSpan.FromSeconds(1));
+
+            return  _generos.FirstOrDefault(x => x.Id == id);
         }
 
 
@@ -37,6 +42,6 @@ namespace back_end.Repositorio
     public interface IRepositorioEnMemoria
     {
         List<Genero> ObtenerTodosLosGeneros();
-        Genero ObtenerPorId(int id);
+        Task<Genero> ObtenerPorId(int id);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using back_end.Entidades;
 using back_end.Repositorio;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 namespace back_end.Controllers
 {
     [Route("api/generos")]
-    [ApiController]
+    [ApiController]//modelo de una accion es invalido, deveulve un error a uns usario que tiene algo malo
     public class GenerosController : ControllerBase
     {
         public IRepositorioEnMemoria _repositorio { get; }
@@ -32,10 +33,19 @@ namespace back_end.Controllers
         }
 
         // GET api/<GenerosController>/5
-        [HttpGet("{id}")]
-        public ActionResult<Genero> Get(int id)
+        //task una promesa de retorno un genero
+        //entre parenticis esta una variable de ruta 
+        [HttpGet("{id:int}")]
+        //se le dice que el nombre es requerido
+        public async Task<ActionResult<Genero>> GetAsync(int id, [BindRequired] string nombre  )
         {
-            Genero genero = _repositorio.ObtenerPorId(id);
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            Genero genero = await _repositorio.ObtenerPorId(id);
 
             if (genero==null)
             {
