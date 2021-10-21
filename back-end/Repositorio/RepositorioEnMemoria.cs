@@ -8,25 +8,25 @@ namespace back_end.Repositorio
 {
     public class RepositorioEnMemoria: IRepositorioEnMemoria
     {
-        private List<Genero> _generos;
+        private List<Genero2> _generos;
 
 
         public RepositorioEnMemoria()
         {
-            _generos = new List<Genero>()
+            _generos = new List<Genero2>()
             {
-                new Genero(){ Id=1 ,Nombre="Comedia"},
-                new Genero(){ Id=2 ,Nombre="Accion"}
+                new Genero2(){ Id=1 ,Nombre="Comedia"},
+                new Genero2(){ Id=2 ,Nombre="Accion"}
             };
         }
 
 
-        public List<Genero> ObtenerTodosLosGeneros()
+        public List<Genero2> ObtenerTodosLosGeneros()
         {
             return _generos;
         }
 
-        public async Task<Genero> ObtenerPorId(int id)
+        public async Task<Genero2> ObtenerPorId(int id)
         {
             //return  _generos.FirstOrDefault(x=>x.Id==id);
             //esperar 3 segundos de manera asincrona
@@ -41,7 +41,7 @@ namespace back_end.Repositorio
 
     public interface IRepositorioEnMemoria
     {
-        List<Genero> ObtenerTodosLosGeneros();
-        Task<Genero> ObtenerPorId(int id);
+        List<Genero2> ObtenerTodosLosGeneros();
+        Task<Genero2> ObtenerPorId(int id);
     }
 }

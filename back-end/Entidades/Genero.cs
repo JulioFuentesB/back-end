@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace back_end.Entidades
 {
-    public class Genero:IValidatableObject//validacion por modelo
+    public class Genero2:IValidatableObject//validacion por modelo
     {
         /// <summary>
         /// identificador de base de datos
@@ -15,7 +15,7 @@ namespace back_end.Entidades
         public int Id { get; set; }
         [Required(ErrorMessage ="El campo {0} es requerido.")]
         [StringLength(maximumLength:10,ErrorMessage ="El campo no debe ser mayoa a {1}")]
-       // [PrimeraLetraMayuscula(ErrorMessage ="cambiando el mensaje primera letra mayuscula")]//validacion por atributo
+        [PrimeraLetraMayuscula(ErrorMessage ="cambiando el mensaje primera letra mayuscula")]//validacion por atributo
         public string Nombre { get; set; }
 
         [Range(18,120)]
@@ -50,4 +50,21 @@ namespace back_end.Entidades
 
         }
     }
+
+
+
+    public class Generos
+    {
+        /// <summary>
+        /// identificador de base de datos
+        /// </summary>
+        public int Id { get; set; }
+        [Required(ErrorMessage = "El campo {0} es requerido.")]
+        [StringLength(maximumLength: 10, ErrorMessage = "El campo no debe ser mayoa a {1}")]
+        [PrimeraLetraMayuscula(ErrorMessage = "cambiando el mensaje primera letra mayuscula")]//validacion por atributo
+        public string Nombre { get; set; }
+
+    }
+
+
 }

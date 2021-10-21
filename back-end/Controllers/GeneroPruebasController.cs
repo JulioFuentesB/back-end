@@ -1,4 +1,5 @@
 ﻿using back_end.Entidades;
+using back_end.Filtros;
 using back_end.Repositorio;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -12,32 +13,35 @@ using System.Threading.Tasks;
 
 namespace back_end.Controllers
 {
-    [Route("api/generos")]
+    [Route("api/generosPruebas")]
     [ApiController]//modelo de una accion es invalido, deveulve un error a uns usario que tiene algo malo
-    public class GenerosController : ControllerBase
+    public class GeneroPruebasController : ControllerBase
     {
-
+        public IRepositorioEnMemoria _repositorio { get; }
+        public WeatherForecast WeatherForecast { get; }
         public ILogger<GenerosController> Logger { get; }
 
-        public GenerosController(
-             ILogger<GenerosController> logger
+        public GeneroPruebasController(IRepositorioEnMemoria repositorio,
+            WeatherForecast weatherForecast//sta accediendo a una controler por inyeccion de dependencias
+            , ILogger<GenerosController> logger
             )
         {
-
+            _repositorio = repositorio;
+            WeatherForecast = weatherForecast;
             Logger = logger;
         }
 
-
+        // GET: api/<GenerosController>
         [HttpGet]//   api/generos
+        [HttpGet("listado2")]//  api/generos/listado
+        [HttpGet("/listadoGeneros2")]//  /listadoGeneros
 
-        public ActionResult<List<Generos>> Get()
+        [ServiceFilter(typeof(MiFiltroDeAccion))]
+        public ActionResult<List<Genero2>> Get()
         {
 
-            List<Generos> generos = new List<Generos>()
-            {
-                new Generos{Id=1, Nombre="Drama" }
-            };
-
+            Logger.LogInformation("Vamos a mostrar los generos ");
+            List<Genero2> generos = _repositorio.ObtenerTodosLosGeneros();
 
             return Ok(generos);
         }
@@ -47,7 +51,7 @@ namespace back_end.Controllers
         //entre parenticis esta una variable de ruta 
         [HttpGet("{id:int}")]
         //se le dice que el nombre es requerido
-        public async Task<ActionResult<Genero2>> GetAsync(int id, [BindRequired] string nombre)
+        public async Task<ActionResult<Genero2>> GetAsync(int id, [BindRequired] string nombre  )
         {
 
             if (!ModelState.IsValid)
@@ -55,14 +59,14 @@ namespace back_end.Controllers
                 return BadRequest(ModelState);
             }
 
-            //Genero genero = await _repositorio.ObtenerPorId(id);
+            Genero2 genero = await _repositorio.ObtenerPorId(id);
 
-            //if (genero==null)
-            //{
-            //    NotFound();
-            //}
+            if (genero==null)
+            {
+                NotFound();
+            }
 
-            return Ok();
+            return Ok(genero);
         }
 
         // POST api/<GenerosController>

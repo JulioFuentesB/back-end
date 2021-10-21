@@ -26,7 +26,7 @@ namespace back_end.Validaciones
                 return new ValidationResult("La primera letra edebe ser mayuscula");
             }
 
-            return ValidationResult.Success
+            return ValidationResult.Success;
 
 
         }

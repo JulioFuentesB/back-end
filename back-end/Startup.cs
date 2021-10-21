@@ -1,4 +1,6 @@
+using back_end.Filtros;
 using back_end.Repositorio;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -28,9 +30,31 @@ namespace back_end
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddTransient<IRepositorioEnMemoria, RepositorioEnMemoria>();
+            //solo para navegadores web
+            services.AddCors(
+                options=>
+                {
+                    var frontEnd = Configuration.GetValue<string>("frontend_url");
+                    options.AddDefaultPolicy(builder =>
 
-            services.AddControllers();
+                    {
+                        builder.WithOrigins(frontEnd).AllowAnyMethod().AllowAnyHeader();//va sin / al final
+
+                    });
+                });
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme);
+            services.AddTransient<IRepositorioEnMemoria, RepositorioEnMemoria>();
+            services.AddTransient<MiFiltroDeAccion>();
+
+            services.AddControllers( option=>
+            {
+                //se registra el filtro de forma global 
+                option.Filters.Add(typeof(FiltroDeExcepcion));
+            }
+                
+                
+                );
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "back_end", Version = "v1" });
@@ -51,6 +75,10 @@ namespace back_end
 
             app.UseRouting();
 
+            app.UseCors();
+
+
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
