@@ -2,6 +2,7 @@
 using back_end.Repositorio;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -18,25 +19,25 @@ namespace back_end.Controllers
     {
 
         public ILogger<GenerosController> Logger { get; }
+        public ApplicationDbContext _context { get; }
 
         public GenerosController(
              ILogger<GenerosController> logger
+            , ApplicationDbContext context
             )
         {
 
             Logger = logger;
+            _context = context;
         }
 
 
         [HttpGet]//   api/generos
 
-        public ActionResult<List<Generos>> Get()
+        public async Task<ActionResult<List<Generos>>> GetAsync()
         {
 
-            List<Generos> generos = new List<Generos>()
-            {
-                new Generos{Id=1, Nombre="Drama" }
-            };
+            List<Generos> generos = await _context.Generos.ToListAsync();
 
 
             return Ok(generos);
@@ -67,8 +68,13 @@ namespace back_end.Controllers
 
         // POST api/<GenerosController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<ActionResult> Post([FromBody] Generos genero)
         {
+
+            _context.Add(genero);
+            await _context.SaveChangesAsync();
+            return NoContent();
+
         }
 
         // PUT api/<GenerosController>/5
