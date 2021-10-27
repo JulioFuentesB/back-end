@@ -1,4 +1,6 @@
-﻿using back_end.Entidades;
+﻿using AutoMapper;
+using back_end.DTOs;
+using back_end.Entidades;
 using back_end.Repositorio;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -17,6 +19,7 @@ namespace back_end.Controllers
     [ApiController]//modelo de una accion es invalido, deveulve un error a uns usario que tiene algo malo
     public class GenerosController : ControllerBase
     {
+        private readonly IMapper mapper;
 
         public ILogger<GenerosController> Logger { get; }
         public ApplicationDbContext _context { get; }
@@ -24,23 +27,24 @@ namespace back_end.Controllers
         public GenerosController(
              ILogger<GenerosController> logger
             , ApplicationDbContext context
+            ,IMapper  mapper
             )
         {
 
             Logger = logger;
             _context = context;
+            this.mapper = mapper;
         }
 
 
         [HttpGet]//   api/generos
 
-        public async Task<ActionResult<List<Generos>>> GetAsync()
+        public async Task<ActionResult<List<GenerosDTO>>> GetAsync()
         {
 
             List<Generos> generos = await _context.Generos.ToListAsync();
 
-
-            return Ok(generos);
+            return Ok(mapper.Map<List<GenerosDTO>>(generos));
         }
 
         // GET api/<GenerosController>/5
@@ -68,12 +72,14 @@ namespace back_end.Controllers
 
         // POST api/<GenerosController>
         [HttpPost]
-        public async Task<ActionResult> Post([FromBody] Generos genero)
+        public async Task<ActionResult> Post([FromBody] GeneroCreacionDTO generoCreacionDto)
         {
+
+            var genero = mapper.Map<Generos>(generoCreacionDto);
 
             _context.Add(genero);
             await _context.SaveChangesAsync();
-            return NoContent();
+            return NoContent();//204
 
         }
 

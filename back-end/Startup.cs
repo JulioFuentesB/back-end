@@ -32,6 +32,9 @@ namespace back_end
         public void ConfigureServices(IServiceCollection services)
         {
 
+            //automaper
+            services.AddAutoMapper(typeof(Startup));
+
 
             //datos
             services.AddDbContext<ApplicationDbContext>(options=>

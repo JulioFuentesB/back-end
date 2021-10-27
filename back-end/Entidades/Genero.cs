@@ -61,7 +61,7 @@ namespace back_end.Entidades
         public int Id { get; set; }
         [Required(ErrorMessage = "El campo {0} es requerido.")]
         [StringLength(maximumLength: 50, ErrorMessage = "El campo no debe ser mayoa a {1}")]
-       // [PrimeraLetraMayuscula(ErrorMessage = "cambiando el mensaje primera letra mayuscula")]//validacion por atributo
+        [PrimeraLetraMayuscula(ErrorMessage = "cambiando el mensaje primera letra mayuscula")]//validacion por atributo
         public string Nombre { get; set; }
 
     }
