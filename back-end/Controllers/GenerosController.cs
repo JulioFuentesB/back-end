@@ -79,7 +79,7 @@ namespace back_end.Controllers
 
             _context.Add(genero);
             await _context.SaveChangesAsync();
-            return NoContent();//204
+            return NoContent();//204 
 
         }
 
