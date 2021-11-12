@@ -49,7 +49,8 @@ namespace back_end
                     options.AddDefaultPolicy(builder =>
 
                     {
-                        builder.WithOrigins(frontEnd).AllowAnyMethod().AllowAnyHeader();//va sin / al final
+                        builder.WithOrigins(frontEnd).AllowAnyMethod().AllowAnyHeader()
+                        .WithExposedHeaders(new string[] { "cantidadTotalRegistros" });//va sin / al final
 
                     });
                 });

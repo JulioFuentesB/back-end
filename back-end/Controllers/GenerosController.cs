@@ -2,6 +2,7 @@
 using back_end.DTOs;
 using back_end.Entidades;
 using back_end.Repositorio;
+using back_end.Utilidades;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
@@ -27,7 +28,7 @@ namespace back_end.Controllers
         public GenerosController(
              ILogger<GenerosController> logger
             , ApplicationDbContext context
-            ,IMapper  mapper
+            , IMapper mapper
             )
         {
 
@@ -39,36 +40,55 @@ namespace back_end.Controllers
 
         [HttpGet]//   api/generos
 
-        public async Task<ActionResult<List<GenerosDTO>>> GetAsync()
+        public async Task<ActionResult<List<GenerosDTO>>> GetAsync([FromQuery] PaginacionDTO paginacionDTO)
         {
 
-            List<Generos> generos = await _context.Generos.ToListAsync();
+            var queryable = _context.Generos.AsQueryable();
+            await HttpContext.InsertarParametrosPaginacionCabecera(queryable);
+            var generos = queryable.OrderBy(x => x.Nombre).Paginar(paginacionDTO);
 
             return Ok(mapper.Map<List<GenerosDTO>>(generos));
         }
 
+
+        [HttpGet("{id:int}")]
+        //se le dice que el nombre es requerido
+        public async Task<ActionResult<GenerosDTO>> GetAsync(int id)
+        {
+            Generos genero = await _context.Generos.FirstOrDefaultAsync(x => x.Id == id);
+
+            if (genero == null)
+            {
+                NotFound();
+            }
+
+            return Ok(mapper.Map<GenerosDTO>(genero));
+                       
+        }
+
+
         // GET api/<GenerosController>/5
         //task una promesa de retorno un genero
         //entre parenticis esta una variable de ruta 
-        [HttpGet("{id:int}")]
+      //  [HttpGet("{id:int}")]
         //se le dice que el nombre es requerido
-        public async Task<ActionResult<Genero2>> GetAsync(int id, [BindRequired] string nombre)
-        {
+        //public async Task<ActionResult<Genero2>> GetAsync(int id, [BindRequired] string nombre)
+        //{
 
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest(ModelState);
+        //    }
 
-            //Genero genero = await _repositorio.ObtenerPorId(id);
+        //    //Genero genero = await _repositorio.ObtenerPorId(id);
 
-            //if (genero==null)
-            //{
-            //    NotFound();
-            //}
+        //    //if (genero==null)
+        //    //{
+        //    //    NotFound();
+        //    //}
 
-            return Ok();
-        }
+        //    return Ok();
+        //}
 
         // POST api/<GenerosController>
         [HttpPost]
@@ -84,15 +104,40 @@ namespace back_end.Controllers
         }
 
         // PUT api/<GenerosController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPut("{id:int}")]
+        public async Task<ActionResult> PutAsync(int Id, [FromBody] GeneroCreacionDTO generoCreacionDto)
         {
+
+            Generos genero = await _context.Generos.FirstOrDefaultAsync(x => x.Id == Id);
+
+            if (genero == null)
+            {
+                NotFound();
+            }
+
+            genero = mapper.Map(generoCreacionDto,genero);
+            await _context.SaveChangesAsync();
+            return NoContent();//204 
+
         }
 
+
+
         // DELETE api/<GenerosController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpDelete("{id:int}")]
+        public async Task<ActionResult> Delete(int id)
         {
+            var existe= await _context.Generos.AnyAsync(x => x.Id == id);
+
+            if (!existe)
+            {
+                return NotFound();
+            }
+
+            _context.Remove(new Generos() { Id = id });
+            await _context.SaveChangesAsync();
+            return NoContent();//204 
+
         }
     }
 }
