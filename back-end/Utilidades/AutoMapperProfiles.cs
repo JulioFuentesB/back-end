@@ -16,6 +16,10 @@ namespace back_end.Utilidades
 
             CreateMap<Generos, GenerosDTO>().ReverseMap();//mapeeo de doble via 
             CreateMap<GeneroCreacionDTO, Generos>();//no tiene un reversemapeeo de doble via 
+
+            CreateMap<Actores, ActoresDTO>().ReverseMap();//mapeeo de doble via 
+            CreateMap<ActoresCreacionDTO, Actores>()
+                .ForMember(x=>x.Foto, options=> options.Ignore());
         }
     }
 }

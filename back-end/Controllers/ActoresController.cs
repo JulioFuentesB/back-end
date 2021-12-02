@@ -1,0 +1,121 @@
+﻿using AutoMapper;
+using back_end.DTOs;
+using back_end.Entidades;
+using back_end.Repositorio;
+using back_end.Utilidades;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+
+namespace back_end.Controllers
+{
+    [Route("api/Actores")]
+    [ApiController]//modelo de una accion es invalido, deveulve un error a uns usario que tiene algo malo
+    public class ActoresController : ControllerBase
+    {
+        private readonly IMapper mapper;
+
+        public ILogger<ActoresController> Logger { get; }
+        public ApplicationDbContext _context { get; }
+
+        public ActoresController(
+             ILogger<ActoresController> logger
+            , ApplicationDbContext context
+            , IMapper mapper
+            )
+        {
+
+            Logger = logger;
+            _context = context;
+            this.mapper = mapper;
+        }
+
+
+        [HttpGet]//   api/Actores
+
+        public async Task<ActionResult<List<ActoresDTO>>> GetAsync([FromQuery] PaginacionDTO paginacionDTO)
+        {
+
+            var queryable = _context.Actores.AsQueryable();
+            await HttpContext.InsertarParametrosPaginacionCabecera(queryable);
+            var Actores = queryable.OrderBy(x => x.Nombre).Paginar(paginacionDTO);
+
+            return Ok(mapper.Map<List<ActoresDTO>>(Actores));
+        }
+
+
+        [HttpGet("{id:int}")]
+        //se le dice que el nombre es requerido
+        public async Task<ActionResult<ActoresDTO>> GetAsync(int id)
+        {
+            Actores actor = await _context.Actores.FirstOrDefaultAsync(x => x.Id == id);
+
+            if (actor == null)
+            {
+                NotFound();
+            }
+
+            return Ok(mapper.Map<ActoresDTO>(actor));
+                       
+        }
+
+
+        
+        // POST api/<ActoresController>
+        [HttpPost]
+        public async Task<ActionResult> Post([FromForm] ActoresCreacionDTO generoCreacionDto)
+        {
+
+           // var actor = mapper.Map<Actores>(generoCreacionDto);
+
+            //_context.Add(actor);
+            //await _context.SaveChangesAsync();
+            return NoContent();//204 
+
+        }
+
+        // PUT api/<ActoresController>/5
+        [HttpPut("{id:int}")]
+        public async Task<ActionResult> PutAsync(int Id, [FromBody] ActoresCreacionDTO generoCreacionDto)
+        {
+
+            Actores actor = await _context.Actores.FirstOrDefaultAsync(x => x.Id == Id);
+
+            if (actor == null)
+            {
+                NotFound();
+            }
+
+            actor = mapper.Map(generoCreacionDto,actor);
+            await _context.SaveChangesAsync();
+            return NoContent();//204 
+
+        }
+
+
+
+        // DELETE api/<ActoresController>/5
+        [HttpDelete("{id:int}")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            var existe= await _context.Actores.AnyAsync(x => x.Id == id);
+
+            if (!existe)
+            {
+                return NotFound();
+            }
+
+            _context.Remove(new Actores() { Id = id });
+            await _context.SaveChangesAsync();
+            return NoContent();//204 
+
+        }
+    }
+}
