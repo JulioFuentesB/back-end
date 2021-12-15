@@ -10,7 +10,8 @@ namespace back_end.DTOs
     public class ActoresCreacionDTO
     {
 
-        //public int Id { get; set; }
+        //nt-end
+        public int Id { get; set; }
         [Required]
         [StringLength(maximumLength: 200)]
         public string Nombre { get; set; }

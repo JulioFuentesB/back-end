@@ -1,6 +1,7 @@
 using back_end.Entidades;
 using back_end.Filtros;
 using back_end.Repositorio;
+using back_end.Utilidades;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -58,6 +59,9 @@ namespace back_end
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme);
             services.AddTransient<IRepositorioEnMemoria, RepositorioEnMemoria>();
             services.AddTransient<MiFiltroDeAccion>();
+
+            services.AddTransient<IAlmacenadorArchivos, AlmacenadorAzureStorage>();
+
 
             services.AddControllers( option=>
             {

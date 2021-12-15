@@ -21,20 +21,24 @@ namespace back_end.Controllers
     public class ActoresController : ControllerBase
     {
         private readonly IMapper mapper;
-
-        public ILogger<ActoresController> Logger { get; }
-        public ApplicationDbContext _context { get; }
+        private readonly IAlmacenadorArchivos almacenadorArchivos;
+        private readonly ILogger<ActoresController> Logger;
+        private readonly ApplicationDbContext _context;
+        
+        private readonly string contenedor = "actores";
 
         public ActoresController(
              ILogger<ActoresController> logger
             , ApplicationDbContext context
             , IMapper mapper
+            , IAlmacenadorArchivos almacenadorArchivos
             )
         {
 
             Logger = logger;
             _context = context;
             this.mapper = mapper;
+            this.almacenadorArchivos = almacenadorArchivos;
         }
 
 
@@ -70,13 +74,19 @@ namespace back_end.Controllers
         
         // POST api/<ActoresController>
         [HttpPost]
-        public async Task<ActionResult> Post([FromForm] ActoresCreacionDTO generoCreacionDto)
+        public async Task<ActionResult> Post([FromForm] ActoresCreacionDTO actorCreacionDto)
         {
 
-           // var actor = mapper.Map<Actores>(generoCreacionDto);
+            var actor = mapper.Map<Actores>(actorCreacionDto);
 
-            //_context.Add(actor);
-            //await _context.SaveChangesAsync();
+            if (actorCreacionDto.Foto != null)
+            {
+                //para azure
+              actor.Foto=  await almacenadorArchivos.GuardarArchivo(contenedor, actorCreacionDto.Foto);
+            }
+
+            _context.Add(actor);
+            await _context.SaveChangesAsync();
             return NoContent();//204 
 
         }
