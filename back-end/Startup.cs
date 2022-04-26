@@ -60,8 +60,9 @@ namespace back_end
             services.AddTransient<IRepositorioEnMemoria, RepositorioEnMemoria>();
             services.AddTransient<MiFiltroDeAccion>();
 
-            services.AddTransient<IAlmacenadorArchivos, AlmacenadorAzureStorage>();
-
+            //services.AddTransient<IAlmacenadorArchivos, AlmacenadorAzureStorage>();
+            services.AddTransient<IAlmacenadorArchivos, AlmacenadorArchivosLocal>();
+            services.AddHttpContextAccessor();
 
             services.AddControllers( option=>
             {
@@ -88,6 +89,11 @@ namespace back_end
             }
 
             app.UseHttpsRedirection();
+
+
+            ///usar archivos estaricos
+            ///
+            app.UseStaticFiles();
 
             app.UseRouting();
 

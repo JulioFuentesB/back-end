@@ -21,7 +21,7 @@ namespace back_end.Utilidades
         }
 
         //contenedor es una carpeta 
-        public async Task<string> GuardarArchivo(string contenedor, IFormFile archivo)
+        public async Task<string>  GuardarArchivo(string contenedor, IFormFile archivo)
         {
             var cliente = new BlobContainerClient(connectionString, contenedor);
             await cliente.CreateIfNotExistsAsync();

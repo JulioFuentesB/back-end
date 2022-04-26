@@ -77,16 +77,21 @@ namespace back_end.Controllers
         public async Task<ActionResult> Post([FromForm] ActoresCreacionDTO actorCreacionDto)
         {
 
-            var actor = mapper.Map<Actores>(actorCreacionDto);
-
-            if (actorCreacionDto.Foto != null)
+            if (actorCreacionDto.Nombre != "undefined")
             {
-                //para azure
-              actor.Foto=  await almacenadorArchivos.GuardarArchivo(contenedor, actorCreacionDto.Foto);
+                var actor = mapper.Map<Actores>(actorCreacionDto);
+
+                if (actorCreacionDto.Foto != null)
+                {
+                    //para azure
+                    actor.Foto = await almacenadorArchivos.GuardarArchivo(contenedor, actorCreacionDto.Foto);
+                }
+
+                _context.Add(actor);
+                await _context.SaveChangesAsync();
             }
 
-            _context.Add(actor);
-            await _context.SaveChangesAsync();
+            
             return NoContent();//204 
 
         }
