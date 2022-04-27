@@ -11,5 +11,9 @@ namespace back_end.DTOs
         public int Id { get; set; }
         public string Nombre { get; set; }
 
+        public double Latitud { get; set; }
+        // [Range(-180, 180)]
+        public double Longitud { get; set; }
+
     }
 }

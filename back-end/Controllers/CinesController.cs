@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using back_end.DTOs;
 using back_end.Entidades;
+using back_end.Utilidades;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -33,6 +34,31 @@ namespace back_end.Controllers
             this.mapper = mapper;
         }
 
+        [HttpGet]//   api/Actores
+        public async Task<ActionResult<List<CinesDTO>>> GetAsync([FromQuery] PaginacionDTO paginacionDTO)
+        {
+
+            var queryable = _context.Cines.AsQueryable();
+            await HttpContext.InsertarParametrosPaginacionCabecera(queryable);
+            var cines = queryable.OrderBy(x => x.Nombre).Paginar(paginacionDTO);
+
+            return Ok(mapper.Map<List<CinesDTO>>(cines));
+        }
+
+        [HttpGet("{id:int}")]
+        //se le dice que el nombre es requerido
+        public async Task<ActionResult<CinesDTO>> GetAsync(int id)
+        {
+            Cines cine = await _context.Cines.FirstOrDefaultAsync(x => x.Id == id);
+
+            if (cine == null)
+            {
+                NotFound();
+            }
+
+            return Ok(mapper.Map<CinesDTO>(cine));
+
+        }
 
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] CineCreacionDTO cineCreacionDto)
@@ -46,7 +72,6 @@ namespace back_end.Controllers
 
         }
 
-
         [HttpPut("{id:int}")]
         public async Task<ActionResult> PutAsync(int Id, [FromBody] CineCreacionDTO generoCreacionDto)
         {
@@ -59,6 +84,22 @@ namespace back_end.Controllers
             }
 
             genero = mapper.Map(generoCreacionDto, genero);
+            await _context.SaveChangesAsync();
+            return NoContent();//204 
+
+        }
+        
+        [HttpDelete("{id:int}")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            var existe = await _context.Cines.AnyAsync(x => x.Id == id);
+
+            if (!existe)
+            {
+                return NotFound();
+            }
+
+            _context.Remove(new Cines() { Id = id });
             await _context.SaveChangesAsync();
             return NoContent();//204 
 
