@@ -73,7 +73,7 @@ namespace back_end.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult> PutAsync(int Id, [FromBody] CineCreacionDTO generoCreacionDto)
+        public async Task<ActionResult> PutAsync(int Id, [FromBody] CineCreacionDTO cineCreacionDto)
         {
 
             Cines genero = await _context.Cines.FirstOrDefaultAsync(x => x.Id == Id);
@@ -83,7 +83,7 @@ namespace back_end.Controllers
                 NotFound();
             }
 
-            genero = mapper.Map(generoCreacionDto, genero);
+            genero = mapper.Map(cineCreacionDto, genero);
             await _context.SaveChangesAsync();
             return NoContent();//204 
 
