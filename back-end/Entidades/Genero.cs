@@ -26,6 +26,7 @@ namespace back_end.Entidades
         [Url]
         public string URL { get; set; }
 
+      
 
         //validacion directa por que esta dentro de la clse enero y puede utilizar cualquier atributo
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
@@ -63,6 +64,8 @@ namespace back_end.Entidades
         [StringLength(maximumLength: 50, ErrorMessage = "El campo no debe ser mayoa a {1}")]
         [PrimeraLetraMayuscula(ErrorMessage = "cambiando el mensaje primera letra mayuscula")]//validacion por atributo
         public string Nombre { get; set; }
+
+        public List<PeliculasGeneros> PeliculasGeneros { get; set; }
 
     }
 

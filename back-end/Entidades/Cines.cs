@@ -19,5 +19,7 @@ namespace back_end.Entidades
         //unto planeta tierra
         public Point Ubicacion { get; set; }
 
+        public List<PeliculasCines> PeliculasCines { get; set; }
+
     }
 }
