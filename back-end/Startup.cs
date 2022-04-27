@@ -1,3 +1,4 @@
+using AutoMapper;
 using back_end.Entidades;
 using back_end.Filtros;
 using back_end.Repositorio;
@@ -13,6 +14,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using NetTopologySuite;
+using NetTopologySuite.Geometries;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,12 +38,26 @@ namespace back_end
 
             //automaper
             services.AddAutoMapper(typeof(Startup));
+            services.AddSingleton(provider =>
+                 new MapperConfiguration(config =>
+                 {
+                     var geometryFactory = provider.GetRequiredService<GeometryFactory>();
+                     config.AddProfile(new AutoMapperProfiles(geometryFactory));
+                 }).CreateMapper());
 
+            services.AddSingleton<GeometryFactory>(NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326));///numero para mediciones en a tierra
+
+
+            //services.AddTransient<IAlmacenadorArchivos, AlmacenadorAzureStorage>();
+            services.AddTransient<IAlmacenadorArchivos, AlmacenadorArchivosLocal>();
 
             //datos
             services.AddDbContext<ApplicationDbContext>(options=>
-            options.UseSqlServer( Configuration.GetConnectionString("defaultConnection"))
+            options.UseSqlServer( Configuration.GetConnectionString("defaultConnection"), 
+            sqlServer=>sqlServer.UseNetTopologySuite())//paquetes query espaciales 
             );
+
+         
 
             //solo para navegadores web
             services.AddCors(
@@ -60,8 +77,7 @@ namespace back_end
             services.AddTransient<IRepositorioEnMemoria, RepositorioEnMemoria>();
             services.AddTransient<MiFiltroDeAccion>();
 
-            //services.AddTransient<IAlmacenadorArchivos, AlmacenadorAzureStorage>();
-            services.AddTransient<IAlmacenadorArchivos, AlmacenadorArchivosLocal>();
+   
             services.AddHttpContextAccessor();
 
             services.AddControllers( option=>

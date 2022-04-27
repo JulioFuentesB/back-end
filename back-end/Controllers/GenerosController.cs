@@ -105,10 +105,10 @@ namespace back_end.Controllers
 
         // PUT api/<GenerosController>/5
         [HttpPut("{id:int}")]
-        public async Task<ActionResult> PutAsync(int Id, [FromBody] GeneroCreacionDTO generoCreacionDto)
+        public async Task<ActionResult> PutAsync(int Id, [FromBody] CineCreacionDTO generoCreacionDto)
         {
 
-            Generos genero = await _context.Generos.FirstOrDefaultAsync(x => x.Id == Id);
+            Cines genero = await _context.Cines.FirstOrDefaultAsync(x => x.Id == Id);
 
             if (genero == null)
             {

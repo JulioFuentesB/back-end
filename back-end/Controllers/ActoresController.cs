@@ -24,7 +24,7 @@ namespace back_end.Controllers
         private readonly IAlmacenadorArchivos almacenadorArchivos;
         private readonly ILogger<ActoresController> Logger;
         private readonly ApplicationDbContext _context;
-        
+
         private readonly string contenedor = "actores";
 
         public ActoresController(
@@ -67,11 +67,11 @@ namespace back_end.Controllers
             }
 
             return Ok(mapper.Map<ActoresDTO>(actor));
-                       
+
         }
 
 
-        
+
         // POST api/<ActoresController>
         [HttpPost]
         public async Task<ActionResult> Post([FromForm] ActoresCreacionDTO actorCreacionDto)
@@ -91,26 +91,42 @@ namespace back_end.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            
             return NoContent();//204 
 
         }
 
         // PUT api/<ActoresController>/5
         [HttpPut("{id:int}")]
-        public async Task<ActionResult> PutAsync(int Id, [FromBody] ActoresCreacionDTO generoCreacionDto)
+        public async Task<ActionResult> PutAsync(int Id, [FromBody] ActoresCreacionDTO actorCreacionDto)
         {
-
-            Actores actor = await _context.Actores.FirstOrDefaultAsync(x => x.Id == Id);
-
-            if (actor == null)
+            try
             {
-                NotFound();
+                actorCreacionDto.Id = Id;
+                Actores actor = await _context.Actores.FirstOrDefaultAsync(x => x.Id == Id);
+
+                if (actor == null)
+                {
+                    NotFound();
+                }
+
+                actor = mapper.Map(actorCreacionDto, actor);
+
+                if (actorCreacionDto.Foto != null)
+                {
+                    //para azure
+                    actor.Foto = await almacenadorArchivos.EditarArchivo(contenedor, actorCreacionDto.Foto, actor.Foto);
+                }
+
+                await _context.SaveChangesAsync();
+                return NoContent();//204 
+            }
+            catch (Exception Ex)
+            {
+
+                throw;
             }
 
-            actor = mapper.Map(generoCreacionDto,actor);
-            await _context.SaveChangesAsync();
-            return NoContent();//204 
+ 
 
         }
 
@@ -120,15 +136,22 @@ namespace back_end.Controllers
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> Delete(int id)
         {
-            var existe= await _context.Actores.AnyAsync(x => x.Id == id);
+            // var existe= await _context.Actores.AnyAsync(x => x.Id == id);
+            var actor = await _context.Actores.FirstOrDefaultAsync(x => x.Id == id);
 
-            if (!existe)
+
+            //if (!existe)
+            if (actor == null)
             {
                 return NotFound();
             }
 
             _context.Remove(new Actores() { Id = id });
             await _context.SaveChangesAsync();
+
+            await almacenadorArchivos.BorrarArchivo(actor.Foto, contenedor);
+
+
             return NoContent();//204 
 
         }
