@@ -97,7 +97,7 @@ namespace back_end.Controllers
 
         // PUT api/<ActoresController>/5
         [HttpPut("{id:int}")]
-        public async Task<ActionResult> PutAsync(int Id, [FromBody] ActoresCreacionDTO actorCreacionDto)
+        public async Task<ActionResult> PutAsync(int Id, [FromForm] ActoresCreacionDTO actorCreacionDto)
         {
             try
             {

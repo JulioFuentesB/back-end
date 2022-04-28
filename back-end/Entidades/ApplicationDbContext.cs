@@ -36,6 +36,7 @@ namespace back_end.Entidades
         public DbSet<Actores> Actores { get; set; }
 
         public DbSet<Cines> Cines { get; set; }
+        public DbSet<Peliculas> Peliculas { get; set; }
 
         public DbSet<PeliculasActores> PeliculasActores { get; set; }
         public DbSet<PeliculasGeneros> PeliculasGeneros { get; set; }
