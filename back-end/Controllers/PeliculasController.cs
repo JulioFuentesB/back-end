@@ -95,6 +95,19 @@ namespace back_end.Controllers
 
         }
 
+        [HttpGet("PostGet")]
+        public async Task<ActionResult<PeliculasPostGetDTO>> PostGet()
+        {
+            var cines = await _context.Cines.ToListAsync();
+            var generos = await _context.Generos.ToListAsync();
+
+            var cinesDTO = mapper.Map<List<CinesDTO>>(cines);
+            var generosDTO = mapper.Map<List<GenerosDTO>>(generos);
+
+            return new PeliculasPostGetDTO() { Cines = cinesDTO, Generos = generosDTO };
+        }
+
+
         //guardar el orden quenque vinieron los actores
         private void EscribirOrdenActores(Peliculas pelicula)
         {
