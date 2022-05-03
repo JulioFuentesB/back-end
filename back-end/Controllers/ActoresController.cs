@@ -59,7 +59,7 @@ namespace back_end.Controllers
         //se le dice que el nombre es requerido
         public async Task<ActionResult<ActoresDTO>> GetAsync(int id)
         {
-            Actores actor = await _context.Actores.FirstOrDefaultAsync(x => x.Id == id);
+            Actor actor = await _context.Actores.FirstOrDefaultAsync(x => x.Id == id);
 
             if (actor == null)
             {
@@ -79,7 +79,7 @@ namespace back_end.Controllers
 
             if (actorCreacionDto.Nombre != "undefined")
             {
-                var actor = mapper.Map<Actores>(actorCreacionDto);
+                var actor = mapper.Map<Actor>(actorCreacionDto);
 
                 if (actorCreacionDto.Foto != null)
                 {
@@ -102,7 +102,7 @@ namespace back_end.Controllers
             try
             {
                 actorCreacionDto.Id = Id;
-                Actores actor = await _context.Actores.FirstOrDefaultAsync(x => x.Id == Id);
+                Actor actor = await _context.Actores.FirstOrDefaultAsync(x => x.Id == Id);
 
                 if (actor == null)
                 {
@@ -146,7 +146,7 @@ namespace back_end.Controllers
                 return NotFound();
             }
 
-            _context.Remove(new Actores() { Id = id });
+            _context.Remove(new Actor() { Id = id });
             await _context.SaveChangesAsync();
 
             await almacenadorArchivos.BorrarArchivo(actor.Foto, contenedor);
@@ -155,5 +155,24 @@ namespace back_end.Controllers
             return NoContent();//204 
 
         }
+
+
+
+        [HttpPost("buscarPorNombre")]
+        public async Task<ActionResult<List<PeliculaActorDTO>>> BuscarPorNombre([FromBody] string nombre)
+        {
+            if (string.IsNullOrWhiteSpace(nombre))
+            {
+                return new List<PeliculaActorDTO>();
+            }
+
+            return await _context.Actores
+                .Where(x => x.Nombre.Contains(nombre))
+                .Select(x => new PeliculaActorDTO { Id = x.Id, Nombre = x.Nombre, Foto = x.Foto })
+                .Take(5)
+                .ToListAsync();
+
+        }
+
     }
 }

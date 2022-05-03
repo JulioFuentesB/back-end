@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace back_end.Entidades
 {
-    public class Actores
+    public class Actor
     {
         public int Id { get; set; }
         [Required]

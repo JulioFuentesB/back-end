@@ -26,16 +26,16 @@ namespace back_end.DTOs
         public string Resumen { get; set; }
         public string Trailer { get; set; }
         public bool EnCines { get; set; }
-        public DateTime FechaLanzamineto { get; set; } 
+        public DateTime FechaLanzamiento { get; set; } 
 
         public IFormFile Poster { get; set; }
 
         //para deserializar el listado, metodo propio en utilidades
         [ModelBinder(BinderType =typeof(TypeBinder<List<int>>))]
-        public List<int> GenerosId { get; set; }
+        public List<int> GenerosIds { get; set; }
 
         [ModelBinder(BinderType = typeof(TypeBinder<List<int>>))]
-        public List<int> CinesId { get; set; }
+        public List<int> CinesIds { get; set; }
 
         //un modelo complejo
         [ModelBinder(BinderType = typeof(TypeBinder<List<ActorPeliculaCreacionDTO>>))]

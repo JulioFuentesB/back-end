@@ -11,7 +11,7 @@ namespace back_end.Entidades
         public int PeliculaId { get; set; }
         public int ActorId { get; set; }
         public Peliculas Peliculas { get; set; }
-        public Actores Actores { get; set; }
+        public Actor Actores { get; set; }
         [StringLength(maximumLength:100)]
         public string Personaje { get; set; }
         public int Orden { get; set; }

@@ -13,17 +13,17 @@ namespace back_end.Utilidades
     {
         public AutoMapperProfiles(GeometryFactory geometryFactory)
         {
-            CreateMap<Generos, GenerosDTO>().ReverseMap();
-            CreateMap<GeneroCreacionDTO, Generos>();
-            CreateMap<Actores, ActoresDTO>().ReverseMap();
-            CreateMap<ActoresCreacionDTO, Actores>()
+            CreateMap<Genero, GenerosDTO>().ReverseMap();
+            CreateMap<GeneroCreacionDTO, Genero>();
+            CreateMap<Actor, ActoresDTO>().ReverseMap();
+            CreateMap<ActoresCreacionDTO, Actor>()
                 .ForMember(x => x.Foto, options => options.Ignore());
 
-            CreateMap<CineCreacionDTO, Cines>()
+            CreateMap<CineCreacionDTO, Cine>()
                 .ForMember(x => x.Ubicacion, x => x.MapFrom(dto =>
                 geometryFactory.CreatePoint(new Coordinate(dto.Longitud, dto.Latitud))));
 
-            CreateMap<Cines, CinesDTO>()
+            CreateMap<Cine, CinesDTO>()
                 .ForMember(x => x.Latitud, dto => dto.MapFrom(campo => campo.Ubicacion.Y))
                 .ForMember(x => x.Longitud, dto => dto.MapFrom(campo => campo.Ubicacion.X));
 
@@ -121,9 +121,9 @@ namespace back_end.Utilidades
         {
             var resultado = new List<PeliculasGeneros>();
 
-            if (peliculaCreacionDTO.GenerosId == null) { return resultado; }
+            if (peliculaCreacionDTO.GenerosIds == null) { return resultado; }
 
-            foreach (var id in peliculaCreacionDTO.GenerosId)
+            foreach (var id in peliculaCreacionDTO.GenerosIds)
             {
                 resultado.Add(new PeliculasGeneros() { GeneroId = id });
             }
@@ -136,9 +136,9 @@ namespace back_end.Utilidades
         {
             var resultado = new List<PeliculasCines>();
 
-            if (peliculaCreacionDTO.CinesId == null) { return resultado; }
+            if (peliculaCreacionDTO.CinesIds == null) { return resultado; }
 
-            foreach (var id in peliculaCreacionDTO.CinesId)
+            foreach (var id in peliculaCreacionDTO.CinesIds)
             {
                 resultado.Add(new PeliculasCines() { CineId = id });
             }

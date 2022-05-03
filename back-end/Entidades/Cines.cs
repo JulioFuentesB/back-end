@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace back_end.Entidades
 {
-    public class Cines
+    public class Cine
     {
         public int Id { get; set; }
 

@@ -10,7 +10,7 @@ namespace back_end.Entidades
         public int PeliculaId { get; set; }
         public int GeneroId { get; set; }
         public Peliculas Peliculas { get; set; }
-        public Generos Generos { get; set; }
+        public Genero Generos { get; set; }
 
     }
 }

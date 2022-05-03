@@ -49,7 +49,7 @@ namespace back_end.Controllers
         //se le dice que el nombre es requerido
         public async Task<ActionResult<CinesDTO>> GetAsync(int id)
         {
-            Cines cine = await _context.Cines.FirstOrDefaultAsync(x => x.Id == id);
+            Cine cine = await _context.Cines.FirstOrDefaultAsync(x => x.Id == id);
 
             if (cine == null)
             {
@@ -64,7 +64,7 @@ namespace back_end.Controllers
         public async Task<ActionResult> Post([FromBody] CineCreacionDTO cineCreacionDto)
         {
 
-            var genero = mapper.Map<Cines>(cineCreacionDto);
+            var genero = mapper.Map<Cine>(cineCreacionDto);
 
             _context.Add(genero);
             await _context.SaveChangesAsync();
@@ -76,7 +76,7 @@ namespace back_end.Controllers
         public async Task<ActionResult> PutAsync(int Id, [FromBody] CineCreacionDTO cineCreacionDto)
         {
 
-            Cines genero = await _context.Cines.FirstOrDefaultAsync(x => x.Id == Id);
+            Cine genero = await _context.Cines.FirstOrDefaultAsync(x => x.Id == Id);
 
             if (genero == null)
             {
@@ -99,7 +99,7 @@ namespace back_end.Controllers
                 return NotFound();
             }
 
-            _context.Remove(new Cines() { Id = id });
+            _context.Remove(new Cine() { Id = id });
             await _context.SaveChangesAsync();
             return NoContent();//204 
 

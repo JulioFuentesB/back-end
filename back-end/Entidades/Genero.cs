@@ -54,7 +54,7 @@ namespace back_end.Entidades
 
 
 
-    public class Generos
+    public class Genero
     {
         /// <summary>
         /// identificador de base de datos

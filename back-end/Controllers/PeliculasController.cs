@@ -108,6 +108,12 @@ namespace back_end.Controllers
         }
 
 
+
+
+
+
+
+
         //guardar el orden quenque vinieron los actores
         private void EscribirOrdenActores(Peliculas pelicula)
         {
