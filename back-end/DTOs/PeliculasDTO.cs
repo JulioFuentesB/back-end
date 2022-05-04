@@ -15,5 +15,8 @@ namespace back_end.DTOs
         public bool EnCines { get; set; }
         public DateTime FechaLanzamineto { get; set; }
         public string Poster { get; set; }
+        public List<GenerosDTO> Generos { get; set; }
+        public List<PeliculaActorDTO> Actores { get; set; }
+        public List<CinesDTO> Cines { get; set; }
     }
 }

@@ -56,18 +56,23 @@ namespace back_end.Controllers
 
 
         [HttpGet("{id:int}")]
-        //se le dice que el nombre es requerido
-        public async Task<ActionResult<PeliculasDTO>> GetAsync(int id)
+        public async Task<ActionResult<PeliculasDTO>> Get(int id)
         {
-            Peliculas Pelicula = await _context.Peliculas.FirstOrDefaultAsync(x => x.Id == id);
+            var pelicula = await _context.Peliculas
+                //asu vez traer el genero
+                .Include(x => x.PeliculasGeneros).ThenInclude(x => x.Generos)
+                .Include(x => x.PeliculasActores).ThenInclude(x => x.Actores)
+                .Include(x => x.PeliculasCines).ThenInclude(x => x.Cines)
+                .FirstOrDefaultAsync(x => x.Id == id);
 
-            if (Pelicula == null)
-            {
-                NotFound();
-            }
+            if (pelicula == null) { return NotFound(); }
 
-            return Ok(mapper.Map<PeliculasDTO>(Pelicula));
+            var dto = mapper.Map<PeliculasDTO>(pelicula);
+            dto.Actores = dto.Actores.OrderBy(x => x.Orden).ToList();
+            return dto;
         }
+
+
 
         // POST api/<PeliculasController>
         [HttpPost]
