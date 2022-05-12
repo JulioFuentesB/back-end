@@ -19,4 +19,5 @@ namespace back_end.DTOs
         public List<PeliculaActorDTO> Actores { get; set; }
         public List<CinesDTO> Cines { get; set; }
     }
+
 }
