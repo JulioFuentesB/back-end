@@ -110,7 +110,9 @@ namespace back_end.Utilidades
 
             foreach (var actor in peliculaCreacionDTO.Actores)
             {
-                resultado.Add(new PeliculasActores() { ActorId = actor.Id, Personaje = actor.Personaje });
+                //resultado.Add(new PeliculasActores() { ActorId = actor.Id, Personaje = actor.Personaje ,PeliculaId= peliculaCreacionDTO .Id});
+
+                resultado.Add(new PeliculasActores() { ActorId = actor.Id, Personaje = actor.Personaje});
             }
 
             return resultado;
@@ -125,6 +127,7 @@ namespace back_end.Utilidades
 
             foreach (var id in peliculaCreacionDTO.GenerosIds)
             {
+                //resultado.Add(new PeliculasGeneros() { GeneroId = id, PeliculaId= peliculaCreacionDTO.Id });
                 resultado.Add(new PeliculasGeneros() { GeneroId = id });
             }
 
@@ -140,6 +143,7 @@ namespace back_end.Utilidades
 
             foreach (var id in peliculaCreacionDTO.CinesIds)
             {
+                //resultado.Add(new PeliculasCines() { CineId = id, PeliculaId= peliculaCreacionDTO.Id });
                 resultado.Add(new PeliculasCines() { CineId = id });
             }
 

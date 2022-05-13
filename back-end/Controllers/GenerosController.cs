@@ -50,6 +50,14 @@ namespace back_end.Controllers
             return Ok(mapper.Map<List<GenerosDTO>>(generos));
         }
 
+        [HttpGet("todos")]
+        public async Task<ActionResult<List<GenerosDTO>>> Todos()
+        {
+            var generos = await _context.Generos.ToListAsync();
+            return mapper.Map<List<GenerosDTO>>(generos);
+        }
+
+
 
         [HttpGet("{id:int}")]
         //se le dice que el nombre es requerido

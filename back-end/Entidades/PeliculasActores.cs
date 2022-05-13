@@ -8,7 +8,7 @@ namespace back_end.Entidades
 {
     public class PeliculasActores
     {
-        public int PeliculaId { get; set; }
+        public int PeliculasId { get; set; }
         public int ActorId { get; set; }
         public Peliculas Peliculas { get; set; }
         public Actor Actores { get; set; }

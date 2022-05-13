@@ -18,13 +18,13 @@ namespace back_end.Entidades
         {
 
             modelBuilder.Entity<PeliculasActores>()
-                .HasKey(x => new { x.ActorId, x.PeliculaId });
+                .HasKey(x => new { x.ActorId, x.PeliculasId });
 
             modelBuilder.Entity<PeliculasGeneros>()
-                .HasKey(x => new { x.PeliculaId, x.GeneroId });
+                .HasKey(x => new { x.PeliculasId, x.GeneroId });
 
             modelBuilder.Entity<PeliculasCines>()
-                .HasKey(x => new { x.PeliculaId, x.CineId });
+                .HasKey(x => new { x.PeliculasId, x.CineId });
 
             base.OnModelCreating(modelBuilder);
         }
