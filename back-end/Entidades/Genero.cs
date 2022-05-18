@@ -69,5 +69,4 @@ namespace back_end.Entidades
 
     }
 
-
 }

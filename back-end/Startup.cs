@@ -20,6 +20,7 @@ using NetTopologySuite;
 using NetTopologySuite.Geometries;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,6 +31,8 @@ namespace back_end
     {
         public Startup(IConfiguration configuration)
         {
+            //identity mapea el valor del email por otro que se usa en raitings, se coloca esta linea para evitar eso
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
             Configuration = configuration;
         }
 
