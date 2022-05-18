@@ -2,6 +2,7 @@
 using AutoMapper;
 using back_end.DTOs;
 using back_end.Entidades;
+using back_end.Utilidades;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -43,21 +44,32 @@ namespace back_end.Controllers
             this.mapper = mapper;
         }
 
-
-        [HttpPost("login")]
-        public async Task<ActionResult<RespuestaAutenticacion>> Login([FromBody] CredencialesUsuario credenciales)
+        [HttpGet("listadoUsuarios")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "EsAdmin")]
+        public async Task<ActionResult<List<UsuarioDTO>>> ListadoUsuarios([FromQuery] PaginacionDTO paginacionDTO)
         {
-            var resultado = await signInManager.PasswordSignInAsync(credenciales.Email, credenciales.Password,
-                isPersistent: false, lockoutOnFailure: false);
+            var queryable = context.Users.AsQueryable();
+            await HttpContext.InsertarParametrosPaginacionCabecera(queryable);
+            var usuarios = await queryable.OrderBy(x => x.Email).Paginar(paginacionDTO).ToListAsync();
+            return mapper.Map<List<UsuarioDTO>>(usuarios);
+        }
 
-            if (resultado.Succeeded)
-            {
-                return await ConstruirToken(credenciales);
-            }
-            else
-            {
-                return BadRequest("Login incorrecto");
-            }
+        [HttpPost("HacerAdmin")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "EsAdmin")]
+        public async Task<ActionResult> HacerAdmin([FromBody] string usuarioId)
+        {
+            var usuario = await userManager.FindByIdAsync(usuarioId);
+            await userManager.AddClaimAsync(usuario, new Claim("role", "admin"));
+            return NoContent();
+        }
+
+        [HttpPost("RemoverAdmin")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "EsAdmin")]
+        public async Task<ActionResult> RemoverAdmin([FromBody] string usuarioId)
+        {
+            var usuario = await userManager.FindByIdAsync(usuarioId);
+            await userManager.RemoveClaimAsync(usuario, new Claim("role", "admin"));
+            return NoContent();
         }
 
         [HttpPost("crear")]
@@ -76,18 +88,33 @@ namespace back_end.Controllers
             }
         }
 
+        [HttpPost("login")]
+        public async Task<ActionResult<RespuestaAutenticacion>> Login([FromBody] CredencialesUsuario credenciales)
+        {
+            var resultado = await signInManager.PasswordSignInAsync(credenciales.Email, credenciales.Password,
+                isPersistent: false, lockoutOnFailure: false);
+
+            if (resultado.Succeeded)
+            {
+                return await ConstruirToken(credenciales);
+            }
+            else
+            {
+                return BadRequest("Login incorrecto");
+            }
+        }
+
         private async Task<RespuestaAutenticacion> ConstruirToken(CredencialesUsuario credenciales)
         {
-
             var claims = new List<Claim>()
             {
-                new Claim("email",credenciales.Email)
+                new Claim("email", credenciales.Email)
             };
 
             var usuario = await userManager.FindByEmailAsync(credenciales.Email);
-            var claimsDb = await userManager.GetClaimsAsync(usuario);
+            var claimsDB = await userManager.GetClaimsAsync(usuario);
 
-            claims.AddRange(claimsDb);
+            claims.AddRange(claimsDB);
 
             var llave = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["llavejwt"]));
             var creds = new SigningCredentials(llave, SecurityAlgorithms.HmacSha256);
@@ -102,9 +129,6 @@ namespace back_end.Controllers
                 Token = new JwtSecurityTokenHandler().WriteToken(token),
                 Expiracion = expiracion
             };
-
         }
-
-
     }
 }
