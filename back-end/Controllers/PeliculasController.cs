@@ -21,7 +21,7 @@ namespace back_end.Controllers
 {
     [Route("api/Peliculas")]
     [ApiController]//modelo de una accion es invalido, deveulve un error a uns usario que tiene algo malo
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "EsAdmin")]
     public class PeliculasController : ControllerBase
     {
         private readonly IMapper mapper;
@@ -168,7 +168,6 @@ namespace back_end.Controllers
             var peliculas = await peliculasQueryable.Paginar(peliculasFiltrarDTO.PaginacionDTO).ToListAsync();
             return mapper.Map<List<PeliculasDTO>>(peliculas);
         }
-
 
         // POST api/<PeliculasController>
         [HttpPost]

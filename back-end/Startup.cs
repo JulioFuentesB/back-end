@@ -98,7 +98,10 @@ namespace back_end
                 ClockSkew = TimeSpan.Zero//no tenga diferencias de tiempo si el token vencio
             });
 
-
+            services.AddAuthorization(opciones =>
+            {
+                opciones.AddPolicy("EsAdmin", policy => policy.RequireClaim("role", "admin"));
+            });
 
             services.AddTransient<IRepositorioEnMemoria, RepositorioEnMemoria>();
             services.AddTransient<MiFiltroDeAccion>();

@@ -3,6 +3,8 @@ using back_end.DTOs;
 using back_end.Entidades;
 using back_end.Repositorio;
 using back_end.Utilidades;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
@@ -18,6 +20,7 @@ namespace back_end.Controllers
 {
     [Route("api/Actores")]
     [ApiController]//modelo de una accion es invalido, deveulve un error a uns usario que tiene algo malo
+    [Authorize(AuthenticationSchemes =JwtBearerDefaults.AuthenticationScheme,Policy ="EsAdmin")]
     public class ActoresController : ControllerBase
     {
         private readonly IMapper mapper;
@@ -41,9 +44,7 @@ namespace back_end.Controllers
             this.almacenadorArchivos = almacenadorArchivos;
         }
 
-
         [HttpGet]//   api/Actores
-
         public async Task<ActionResult<List<ActoresDTO>>> GetAsync([FromQuery] PaginacionDTO paginacionDTO)
         {
 
@@ -53,7 +54,6 @@ namespace back_end.Controllers
 
             return Ok(mapper.Map<List<ActoresDTO>>(Actores));
         }
-
 
         [HttpGet("{id:int}")]
         //se le dice que el nombre es requerido
@@ -69,8 +69,6 @@ namespace back_end.Controllers
             return Ok(mapper.Map<ActoresDTO>(actor));
 
         }
-
-
 
         // POST api/<ActoresController>
         [HttpPost]
@@ -130,8 +128,6 @@ namespace back_end.Controllers
 
         }
 
-
-
         // DELETE api/<ActoresController>/5
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> Delete(int id)
@@ -155,8 +151,6 @@ namespace back_end.Controllers
             return NoContent();//204 
 
         }
-
-
 
         [HttpPost("buscarPorNombre")]
         public async Task<ActionResult<List<PeliculaActorDTO>>> BuscarPorNombre([FromBody] string nombre)

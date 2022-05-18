@@ -2,6 +2,8 @@
 using back_end.DTOs;
 using back_end.Entidades;
 using back_end.Utilidades;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +17,7 @@ namespace back_end.Controllers
 {
     [Route("api/Cines")]
     [ApiController]//modelo de una accion es invalido, deveulve un error a uns usario que tiene algo malo
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "EsAdmin")]
     public class CinesController : ControllerBase
     {
         private readonly IMapper mapper;

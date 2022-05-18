@@ -3,6 +3,8 @@ using back_end.DTOs;
 using back_end.Entidades;
 using back_end.Repositorio;
 using back_end.Utilidades;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
@@ -18,6 +20,7 @@ namespace back_end.Controllers
 {
     [Route("api/generos")]
     [ApiController]//modelo de una accion es invalido, deveulve un error a uns usario que tiene algo malo
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "EsAdmin")]
     public class GenerosController : ControllerBase
     {
         private readonly IMapper mapper;
@@ -39,7 +42,6 @@ namespace back_end.Controllers
 
 
         [HttpGet]//   api/generos
-
         public async Task<ActionResult<List<GenerosDTO>>> GetAsync([FromQuery] PaginacionDTO paginacionDTO)
         {
 
@@ -51,13 +53,12 @@ namespace back_end.Controllers
         }
 
         [HttpGet("todos")]
+        [AllowAnonymous]
         public async Task<ActionResult<List<GenerosDTO>>> Todos()
         {
             var generos = await _context.Generos.ToListAsync();
             return mapper.Map<List<GenerosDTO>>(generos);
         }
-
-
 
         [HttpGet("{id:int}")]
         //se le dice que el nombre es requerido
@@ -73,7 +74,6 @@ namespace back_end.Controllers
             return Ok(mapper.Map<GenerosDTO>(genero));
                        
         }
-
 
         // GET api/<GenerosController>/5
         //task una promesa de retorno un genero
@@ -113,10 +113,10 @@ namespace back_end.Controllers
 
         // PUT api/<GenerosController>/5
         [HttpPut("{id:int}")]
-        public async Task<ActionResult> PutAsync(int Id, [FromBody] CineCreacionDTO generoCreacionDto)
+        public async Task<ActionResult> PutAsync(int Id, [FromBody] GeneroCreacionDTO generoCreacionDto)
         {
 
-            Cine genero = await _context.Cines.FirstOrDefaultAsync(x => x.Id == Id);
+            Genero genero = await _context.Generos.FirstOrDefaultAsync(x => x.Id == Id);
 
             if (genero == null)
             {
@@ -128,8 +128,6 @@ namespace back_end.Controllers
             return NoContent();//204 
 
         }
-
-
 
         // DELETE api/<GenerosController>/5
         [HttpDelete("{id:int}")]

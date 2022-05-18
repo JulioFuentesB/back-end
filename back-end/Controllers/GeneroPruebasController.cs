@@ -1,6 +1,8 @@
 ﻿using back_end.Entidades;
 using back_end.Filtros;
 using back_end.Repositorio;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Logging;
@@ -15,6 +17,7 @@ namespace back_end.Controllers
 {
     [Route("api/generosPruebas")]
     [ApiController]//modelo de una accion es invalido, deveulve un error a uns usario que tiene algo malo
+   // [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "EsAdmin")]
     public class GeneroPruebasController : ControllerBase
     {
         public IRepositorioEnMemoria _repositorio { get; }
