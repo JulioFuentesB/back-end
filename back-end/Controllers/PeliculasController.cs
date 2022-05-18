@@ -3,6 +3,9 @@ using back_end.DTOs;
 using back_end.Entidades;
 using back_end.Repositorio;
 using back_end.Utilidades;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
@@ -18,10 +21,12 @@ namespace back_end.Controllers
 {
     [Route("api/Peliculas")]
     [ApiController]//modelo de una accion es invalido, deveulve un error a uns usario que tiene algo malo
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class PeliculasController : ControllerBase
     {
         private readonly IMapper mapper;
         private readonly IAlmacenadorArchivos almacenadorArchivos;
+        private readonly UserManager<IdentityUser> userManager;
         private readonly ILogger<PeliculasController> Logger;
         private readonly ApplicationDbContext _context;
 
@@ -32,6 +37,7 @@ namespace back_end.Controllers
             , ApplicationDbContext context
             , IMapper mapper
             , IAlmacenadorArchivos almacenadorArchivos
+            , UserManager<IdentityUser> userManager
             )
         {
 
@@ -39,6 +45,7 @@ namespace back_end.Controllers
             _context = context;
             this.mapper = mapper;
             this.almacenadorArchivos = almacenadorArchivos;
+            this.userManager = userManager;
         }
 
 
@@ -56,6 +63,7 @@ namespace back_end.Controllers
 
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<LangingPageDTO>> get()
         {
             var top = 6;
@@ -80,6 +88,7 @@ namespace back_end.Controllers
         }
 
         [HttpGet("{id:int}")]
+        [AllowAnonymous]
         public async Task<ActionResult<PeliculasDTO>> Get(int id)
         {
             var pelicula = await _context.Peliculas
@@ -91,12 +100,42 @@ namespace back_end.Controllers
 
             if (pelicula == null) { return NotFound(); }
 
+            var promedioVoto = 0.0;
+            var usuarioVoto = 0;
+
+            if (await _context.Ratings.AnyAsync(x => x.PeliculaId == id))
+            {
+
+                promedioVoto = await _context.Ratings.Where(x => x.PeliculaId == id)
+                    .AverageAsync(x => x.Puntuacion);
+
+                if (HttpContext.User.Identity.IsAuthenticated)
+                {
+                    var email = HttpContext.User.Claims.FirstOrDefault(x => x.Type == "email").Value;
+                    var usuario = await userManager.FindByEmailAsync(email);
+                    var usuarioId = usuario.Id;
+
+                    var ratinDB = await _context.Ratings
+                      .FirstOrDefaultAsync(x => x.UsuarioId == usuarioId && x.PeliculaId == id);
+
+                    if (ratinDB != null)
+                    {
+                        usuarioVoto = ratinDB.Puntuacion;
+                    }
+
+                }              
+
+            }
+
             var dto = mapper.Map<PeliculasDTO>(pelicula);
+            dto.VotoUsuario = usuarioVoto;
+            dto.PromedioVoto = promedioVoto;
             dto.Actores = dto.Actores.OrderBy(x => x.Orden).ToList();
             return dto;
         }
 
         [HttpGet("filtrar")]
+        [AllowAnonymous]
         public async Task<ActionResult<List<PeliculasDTO>>> Filtrar([FromQuery] PeliculasFiltrarDTO peliculasFiltrarDTO)
         {
             var peliculasQueryable = _context.Peliculas.AsQueryable();
@@ -275,7 +314,7 @@ namespace back_end.Controllers
 
                 throw ex;
             }
-            
+
         }
 
         //guardar el orden quenque vinieron los actores
