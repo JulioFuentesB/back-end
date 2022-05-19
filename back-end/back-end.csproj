@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <RootNamespace>back_end</RootNamespace>
+    <UserSecretsId>e551a4e2-0753-4dbe-be19-8fb32f169532</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
