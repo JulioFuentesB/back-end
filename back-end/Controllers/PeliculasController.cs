@@ -30,7 +30,7 @@ namespace back_end.Controllers
         private readonly ILogger<PeliculasController> Logger;
         private readonly ApplicationDbContext _context;
 
-        private readonly string contenedor = "Peliculas";
+        private readonly string contenedor = "peliculas";
 
         public PeliculasController(
              ILogger<PeliculasController> logger
@@ -91,7 +91,7 @@ namespace back_end.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<PeliculasDTO>> Get(int id)
         {
-            var pelicula = await _context.Peliculas
+            Peliculas pelicula = await _context.Peliculas
                 //asu vez traer el genero
                 .Include(x => x.PeliculasGeneros).ThenInclude(x => x.Generos)
                 .Include(x => x.PeliculasActores).ThenInclude(x => x.Actores)

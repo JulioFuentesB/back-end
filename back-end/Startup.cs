@@ -54,8 +54,8 @@ namespace back_end
             services.AddSingleton<GeometryFactory>(NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326));///numero para mediciones en a tierra
 
 
-            //services.AddTransient<IAlmacenadorArchivos, AlmacenadorAzureStorage>();
-            services.AddTransient<IAlmacenadorArchivos, AlmacenadorArchivosLocal>();
+            services.AddTransient<IAlmacenadorArchivos, AlmacenadorAzureStorage>();
+            //services.AddTransient<IAlmacenadorArchivos, AlmacenadorArchivosLocal>();
 
             //datos
             services.AddDbContext<ApplicationDbContext>(options=>
@@ -63,45 +63,53 @@ namespace back_end
             sqlServer=>sqlServer.UseNetTopologySuite())//paquetes query espaciales 
             );
 
-         
+
 
             //solo para navegadores web
-            services.AddCors(
-                options=>
-                {
-                    var frontEnd = Configuration.GetValue<string>("frontend_url");
-                    options.AddDefaultPolicy(builder =>
+            //services.AddCors(
+            //    options=>
+            //    {
+            //        var frontEnd = Configuration.GetValue<string>("frontend_url");
+            //        options.AddDefaultPolicy(builder =>
 
-                    {
-                        builder.WithOrigins(frontEnd).AllowAnyMethod().AllowAnyHeader()
-                        .WithExposedHeaders(new string[] { "cantidadTotalRegistros" });//va sin / al final
+            //        {
+            //            builder.WithOrigins(frontEnd).AllowAnyMethod().AllowAnyHeader()
+            //            .WithExposedHeaders(new string[] { "cantidadTotalRegistros" });//va sin / al final
 
-                    });
-                });
+            //        });
+            //    });
 
+
+            //services.AddCors(options =>
+            //{
+            //    options.AddDefaultPolicy(builder =>
+            //    builder.WithOrigins("https://localhost:44327")
+            //           .AllowAnyMethod()
+            //           .AllowAnyHeader());
+            //});
 
             services.AddIdentity<IdentityUser, IdentityRole>()
                  .AddEntityFrameworkStores<ApplicationDbContext>()
                  .AddDefaultTokenProviders();
 
 
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(opciones =>
-            opciones.TokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateIssuer = false,
-                ValidateAudience = false,
-                ValidateLifetime = true,// no use un toquen de manera indefinida, ejmplo un dia
-                ValidateIssuerSigningKey = true,//validar la firma con la llave privada
-                IssuerSigningKey = new SymmetricSecurityKey(
-                    Encoding.UTF8.GetBytes(Configuration["llavejwt"])),
-                ClockSkew = TimeSpan.Zero//no tenga diferencias de tiempo si el token vencio
-            });
+            //services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            //.AddJwtBearer(opciones =>
+            //opciones.TokenValidationParameters = new TokenValidationParameters
+            //{
+            //    ValidateIssuer = false,
+            //    ValidateAudience = false,
+            //    ValidateLifetime = true,// no use un toquen de manera indefinida, ejmplo un dia
+            //    ValidateIssuerSigningKey = true,//validar la firma con la llave privada
+            //    IssuerSigningKey = new SymmetricSecurityKey(
+            //        Encoding.UTF8.GetBytes(Configuration["llavejwt"])),
+            //    ClockSkew = TimeSpan.Zero//no tenga diferencias de tiempo si el token vencio
+            //});
 
-            services.AddAuthorization(opciones =>
-            {
-                opciones.AddPolicy("EsAdmin", policy => policy.RequireClaim("role", "admin"));
-            });
+            //services.AddAuthorization(opciones =>
+            //{
+            //    opciones.AddPolicy("EsAdmin", policy => policy.RequireClaim("role", "admin"));
+            //});
 
             services.AddTransient<IRepositorioEnMemoria, RepositorioEnMemoria>();
             services.AddTransient<MiFiltroDeAccion>();
@@ -114,6 +122,8 @@ namespace back_end
                 //se registra el filtro de forma global 
                 option.Filters.Add(typeof(FiltroDeExcepcion));
             }
+
+ 
                 
                 
                 );
@@ -143,11 +153,11 @@ namespace back_end
 
             app.UseRouting();
 
-            app.UseCors();
+            //app.UseCors();
 
 
-            app.UseAuthentication();
-            app.UseAuthorization();
+            //app.UseAuthentication();
+            //app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {

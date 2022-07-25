@@ -20,7 +20,7 @@ namespace back_end.Controllers
 {
     [Route("api/generos")]
     [ApiController]//modelo de una accion es invalido, deveulve un error a uns usario que tiene algo malo
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "EsAdmin")]
+    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "EsAdmin")]
     public class GenerosController : ControllerBase
     {
         private readonly IMapper mapper;

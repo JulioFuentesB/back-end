@@ -1,4 +1,5 @@
 ﻿using back_end.Repositorio;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -8,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace back_end.Controllers
 {
+    [DisableCors]
     [ApiController]
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
